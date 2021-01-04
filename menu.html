@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+	    <meta name="author" content="GalaxHD551">
+	    <title>Character Customization</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <script>
+			(function(obj) {
+				ue.game = {};
+				ue.game.callevent = function(name, ...args) {
+					if (typeof name != "string") return;
+		
+					if (args.length == 0) {
+						obj.callevent(name, "");
+					}	else {
+                        let params = [];
+            
+						for (let i = 0; i < args.length; i++) {
+							params[i] = args[i];
+                        }
+                        
+						obj.callevent(name, JSON.stringify(params));
+					}
+				};
+            })(ue.game);
+    
+            CallEvent = ue.game.callevent;
+        </script>
+
+        <link href="index.css" rel="stylesheet">
+
+    </head>
+    <body>
+        <div id="credits">Character Customizer by GalaxHD551 - 1.0</div>
+        <div id="menu">
+
+            <div id="displayMenu">
+                <div class="divMenu">
+                    <div><button class="buttonMenu" type="button" onclick="ShowIdentity(this)">Identity</button></div>
+                </div>
+
+                <div class="divMenu">
+                    <div><button class="buttonMenu" type="button" onclick="ShowHead(this)">Head</button></div>
+                </div>
+
+                <div class="divMenu">
+                    <div><button class="buttonMenu" type="button" onclick="ShowTorso(this)">Torso</button></div>
+                </div>
+
+                <div class="divMenu">
+                    <div><button class="buttonMenu" type="button" onclick="ShowPants(this)">Pants</button></div>
+                </div>
+            
+                <div class="divMenu">
+                    <div><button class="buttonMenu" type="button" onclick="ShowShoes(this)">Shoes</button></div>
+                </div>
+                
+                <div class="lastColonne">
+                    <button class="buttonApply" type="button" onmousedown="Apply(this)">Apply</button>
+                </div>
+            </div>
+
+            <div id="displayIdentity">
+
+                <div class="divlabel">
+                    <div class="Label">Gender</div>
+                </div>
+                <div class="firstColonne">
+                    <button class="buttonGender" type="button" onmousedown="male(this)">Male</button>
+                    <button class="buttonGender" type="button" onmousedown="female(this)">Female</button>
+                </div>
+            
+                <div class="divlabel">
+                    <div class="Label">Body type</div>
+                </div>
+                <div class="colonne">
+                    <div class="sousColonne">
+                        <button class="buttonCusto" type="button" onmousedown="bodytypePrevious(this)">&#8592</button>
+                    </div>
+                    <div class="sousColonne" id="BodyType">Normal 01</div>
+                    <div class="sousColonne">
+                        <button class="buttonCusto" type="button" onmousedown="bodytypeNext(this)">&#8594</button>
+                    </div>
+                </div>
+    
+                <div class="lastColonne">
+                    <button class="buttonApply" type="button" onclick="ShowMenu(this)">Back</button>
+                </div>
+
+            </div>
+
+            <div id="displayHead">
+
+                <div class="divlabel">
+                    <div class="Label">Hair style</div>
+                </div>
+                <div onmouseover="cameraHeadFocus(this)" onmouseleave="cameraHeadFocusEnd(this)">
+                    <div class="colonne" >
+                        <div class="sousColonne">
+                            <button class="buttonCusto" type="button" onmousedown="hairPrevious(this)">&#8592</button>
+                        </div>
+                        <div class="sousColonne" id="Hair">None</div>
+                        <div class="sousColonne">
+                            <button class="buttonCusto" type="button" onmousedown="hairNext(this)">&#8594</button>
+                        </div>    
+                    </div>
+    
+                    <div class="couleurColonne">
+                        <input type="color" id="hairColorPreset" list="presetColor" value="#808080"/>
+                            <datalist id="presetColor">
+                                <option>#808080</option>
+                                <option>#ff0000</option>
+                                <option>#0000ff</option>
+                                <option>#00ff00</option>
+                                <option>#ffff00</option>
+                                <option>#00ffff</option>
+                            </datalist>
+                        <input type="color" id="hairColor" value="#808080"/>
+                    </div>
+    
+                    <div class="divlabel">
+                        <div class="Label">Glasses</div>
+                    </div>
+    
+                    <div class="colonne" >
+                        <div class="sousColonne">
+                            <button class="buttonCusto" type="button" onmousedown="glassesPrevious(this)">&#8592</button>
+                        </div>
+                        <div class="sousColonne" id="Glasses">None</div>
+                        <div class="sousColonne">
+                            <button class="buttonCusto" type="button" onmousedown="glassesNext(this)">&#8594</button>
+                        </div>    
+                    </div>
+
+                    <div class="lastColonne">
+                        <button class="buttonApply" type="button" onclick="ShowMenu(this)">Back</button>
+                    </div>
+    
+                </div>
+
+            </div>
+            
+            <div id="displayTorso">
+
+                <div class="divlabel">
+                    <div class="Label">Outfit</div>
+                </div>
+                <div class="colonne">
+                    <div class="sousColonne">
+                        <button class="buttonCusto" type="button" onmousedown="outfitPrevious(this)">&#8592</button>
+                    </div>
+                    <div class="sousColonne"><div id="outfit">None</div></div> <!--OUTFIT-->
+                    <div class="sousColonne">
+                        <button class="buttonCusto" type="button" onmousedown="outfitNext(this)">&#8594</button>
+                    </div> 
+                </div>
+    
+                <div class="divlabel">
+                    <div class="Label">Top</div>
+                </div>
+                <div class="colonne">
+                    <div class="sousColonne">
+                        <button class="buttonCusto" type="button" onmousedown="clothtopPrevious(this)">&#8592</button>
+                    </div>
+                    <div class="sousColonne"><div id="topCloth">None</div></div> <!--TOP-->
+                    <div class="sousColonne">
+                        <button class="buttonCusto" type="button" onmousedown="clothtopNext(this)">&#8594</button>
+                    </div> 
+                </div>
+    
+                <div class="divlabel">
+                    <div class="Label">Jacket</div>
+                </div>
+                <div class="colonne">
+                    <div class="sousColonne">
+                        <button class="buttonCusto" type="button" onmousedown="jacketPrevious(this)">&#8592</button>
+                    </div>
+                    <div class="sousColonne"><div id="jacket">None</div></div> <!--JACKET-->
+                    <div class="sousColonne">
+                        <button class="buttonCusto" type="button" onmousedown="jacketNext(this)">&#8594</button>
+                    </div> 
+                </div>
+    
+                <div class="lastColonne">
+                    <button class="buttonApply" type="button" onclick="ShowMenu(this)">Back</button>
+                </div>
+
+            </div>
+
+            <div id="displayPants">
+
+                <div class="divlabel">
+                    <div class="Label">Pants</div>
+                </div>
+                <div class="colonne">
+                    <div class="sousColonne">
+                        <button class="buttonCusto" type="button" onmousedown="clothpantsPrevious(this)">&#8592</button>
+                    </div>    
+                    <div class="sousColonne" id="Pants">None</div>
+                    <div class="sousColonne">
+                        <button class="buttonCusto" type="button" onmousedown="clothpantsNext(this)">&#8594</button>
+                    </div>
+                </div>
+
+                <div class="lastColonne">
+                    <button class="buttonApply" type="button" onclick="ShowMenu(this)">Back</button>
+                </div>
+
+            </div>
+
+            <div id="displayShoes">
+
+                <div class="divlabel">
+                    <div class="Label">Shoes</div>
+                </div>
+                <div class="colonne">
+                    <div class="sousColonne">
+                        <button class="buttonCusto" type="button" onmousedown="clothshoesPrevious(this)">&#8592</button>
+                    </div>
+                    <div class="sousColonne" id="Shoes">None</div>
+                    <div class="sousColonne">
+                        <button class="buttonCusto" type="button" onmousedown="clothshoesNext(this)">&#8594</button>
+                    </div>
+                </div>
+
+                <div class="lastColonne">
+                    <button class="buttonApply" type="button" onclick="ShowMenu(this)">Back</button>
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <script>
+
+            function ShowMenu(obj){
+                document.getElementById("displayMenu").style.display = 'block';
+                document.getElementById("displayIdentity").style.display = 'none';
+                document.getElementById("displayHead").style.display = 'none';
+                document.getElementById("displayTorso").style.display = 'none';
+                document.getElementById("displayPants").style.display = 'none';
+                document.getElementById("displayShoes").style.display = 'none';
+            }
+
+            function ShowIdentity(obj){
+                document.getElementById("displayMenu").style.display = 'none';
+                document.getElementById("displayIdentity").style.display = 'block';
+            }
+
+            function ShowHead(obj){
+                document.getElementById("displayMenu").style.display = 'none';
+                document.getElementById("displayHead").style.display = 'block';
+            }
+
+            function ShowTorso(obj){
+                document.getElementById("displayMenu").style.display = 'none';
+                document.getElementById("displayTorso").style.display = 'block';
+            }
+
+            function ShowPants(obj){
+                document.getElementById("displayMenu").style.display = 'none';
+                document.getElementById("displayPants").style.display = 'block';
+            }
+
+            function ShowShoes(obj){
+                document.getElementById("displayMenu").style.display = 'none';
+                document.getElementById("displayShoes").style.display = 'block';
+            }
+
+            function male(obj) {
+                CallEvent("SetMaleBody");
+            }
+            
+            function female(obj) {
+                CallEvent("SetFemaleBody");
+            }
+            
+            function bodytypeNext(obj) {
+                CallEvent("SetBodyType", 1);
+            }
+
+            function bodytypePrevious(obj) {
+                CallEvent("SetBodyType", 0);
+            }
+
+            function UpdateBodyTypeName(label) {
+	            document.getElementById("BodyType").innerHTML = label;
+            }
+
+            function cameraHeadFocus(obj) {
+                CallEvent("SetCameraFocusOnHead", 1)
+            }
+
+            function cameraHeadFocusEnd(obj) {
+                CallEvent("SetCameraFocusOnHead", 0)
+            }
+
+            function hairNext(obj) {
+                CallEvent("SetHairStyle", 1);
+            }
+
+            function hairPrevious(obj) {
+                CallEvent("SetHairStyle", 0);
+            }
+
+            function UpdateHairName(label) {
+	            document.getElementById("Hair").innerHTML = label;
+            }
+
+            var thePresetInput = document.getElementById("hairColorPreset");
+            var thePresetColor = thePresetInput.value;
+            thePresetInput.addEventListener("input", function() {
+                CallEvent("ChangeHairColor", thePresetInput.value, 0)
+            }, false);
+
+            var theInput = document.getElementById("hairColor");
+            var theColor = theInput.value;
+            theInput.addEventListener("input", function() {
+                CallEvent("ChangeHairColor", theInput.value, 1)
+            }, false);
+
+            function glassesNext(obj) {
+                CallEvent("SetGlasses", 1);
+            }
+
+            function glassesPrevious(obj) {
+                CallEvent("SetGlasses", 0);
+            }
+
+            function UpdateGlassesName(label) {
+	            document.getElementById("Glasses").innerHTML = label;
+            }
+
+            function outfitNext(obj) {
+                CallEvent("SetOutfit", 1);
+            }
+
+            function outfitPrevious(obj) {
+                CallEvent("SetOutfit", 0);
+            }
+
+            function UpdateOutfitName(label) {
+	            document.getElementById("outfit").innerHTML = label;
+            }
+
+            function clothtopNext(obj) {
+                CallEvent("SetTopCloth", 1);
+            }
+
+            function clothtopPrevious(obj) {
+                CallEvent("SetTopCloth", 0);
+            }
+
+            function UpdateTopClothName(label) {
+	            document.getElementById("topCloth").innerHTML = label;
+            }
+
+            function jacketNext(obj) {
+                CallEvent("SetJacket", 1);
+            }
+
+            function jacketPrevious(obj) {
+                CallEvent("SetJacket", 0);
+            }
+
+            function UpdateJacketName(label) {
+	            document.getElementById("jacket").innerHTML = label;
+            }
+
+            function clothpantsNext(obj) {
+                CallEvent("SetPantCloth", 1);
+            }
+
+            function clothpantsPrevious(obj) {
+                CallEvent("SetPantCloth", 0);
+            }
+
+            function UpdatePantsName(label) {
+	            document.getElementById("Pants").innerHTML = label;
+            }
+
+            function clothshoesNext(obj) {
+                CallEvent("SetShoes", 1);
+            }
+
+            function clothshoesPrevious(obj) {
+                CallEvent("SetShoes", 0);
+            }
+
+            function UpdateShoesName(label) {
+	            document.getElementById("Shoes").innerHTML = label;
+            }
+
+            function Apply(obj) {
+                CallEvent("Apply");
+            }
+
+        </script>  
+
+    </body>
+</html>
