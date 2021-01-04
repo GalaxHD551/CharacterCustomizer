@@ -264,6 +264,7 @@ AddEvent("OnKeyPress", function(key)
         AddPlayerChat("h "..h)
         SetCameraRotation(h, yaw, roll, true)]]
         local x, y, z = GetCameraLocation()
+        local h = GetPlayerHeading()
        --[[AddPlayerChat("x = "..x)
         AddPlayerChat("y = "..y)
         AddPlayerChat("z = "..z)]]
@@ -277,12 +278,15 @@ AddEvent("OnKeyPress", function(key)
             end
             SetCameraLocation(0.0, 0.0, -55.0, false)
             SetCameraFoV(60)
+            SetIgnoreMoveInput(true)
+            SetControlRotation(-10.0, h - 180, 0.0)
 		else
 			SetWebVisibility(web, WEB_HIDDEN)
 			ShowMouseCursor(false)
             SetInputMode(INPUT_GAME)
             SetCameraLocation(0.0, 0.0, 0.0, false)
             SetCameraFoV(90)
+            SetIgnoreMoveInput(false)
 		end
     end
 end)
@@ -293,10 +297,9 @@ AddEvent("SetMaleBody", function()
     SetPlayerVoiceTone(GetPlayerId(), "male")
     gender = 0
     body = 1
-    local data = GetPlayerPropertyValue(GetPlayerId(), "ClothingsData")
-    data.body = cloth.male.body_models[1].path
     SetPlayerPropertyValue(GetPlayerId(), "ClothingsData", data)
     ExecuteWebJS(web, "UpdateBodyTypeName('"..cloth.male.body_models[1].name.."');")
+    CallRemoteEvent("SyncDataCloth","body", cloth.male.body_models[1].path)
 end)
 
 AddEvent("SetFemaleBody", function()
@@ -309,6 +312,7 @@ AddEvent("SetFemaleBody", function()
     data.body = cloth.female.body_models[1].path
     SetPlayerPropertyValue(GetPlayerId(), "ClothingsData", data)
     ExecuteWebJS(web, "UpdateBodyTypeName('"..cloth.female.body_models[1].name.."');")
+    CallRemoteEvent("SyncDataCloth","body", cloth.female.body_models[1].path)
 end)
 
 AddEvent("SetBodyType", function(action)
@@ -327,9 +331,7 @@ AddEvent("SetBodyType", function(action)
         end
         SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(cloth.male.body_models[body].path))
         ExecuteWebJS(web, "UpdateBodyTypeName('"..cloth.male.body_models[body].name.."');")
-        local data = GetPlayerPropertyValue(GetPlayerId(), "ClothingsData")
-        data.body = cloth.male.body_models[body].path
-        SetPlayerPropertyValue(GetPlayerId(), "ClothingsData", data)
+        CallRemoteEvent("SyncDataCloth","body", cloth.male.body_models[body].path)
     elseif gender == 1 then
         if action == 1 then
             body = body + 1
@@ -344,9 +346,7 @@ AddEvent("SetBodyType", function(action)
         end
         SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(cloth.female.body_models[body].path))
         ExecuteWebJS(web, "UpdateBodyTypeName('"..cloth.female.body_models[body].name.."');")
-        local data = GetPlayerPropertyValue(GetPlayerId(), "ClothingsData")
-        data.body = cloth.female.body_models[body].path
-        SetPlayerPropertyValue(GetPlayerId(), "ClothingsData", data)
+        CallRemoteEvent("SyncDataCloth","body", cloth.female.body_models[body].path)
     end
 end)
 
@@ -366,9 +366,11 @@ AddEvent("SetHairStyle", function(action)
     if hair == 0 then
         SkeletalMeshComponent:SetSkeletalMesh(nil)
         ExecuteWebJS(web, "UpdateHairName('".."None".."');")
+        CallRemoteEvent("SyncDataCloth","clothing0", nil)
     else
         SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(cloth.hair_models[hair].path))
         ExecuteWebJS(web, "UpdateHairName('"..cloth.hair_models[hair].name.."');")
+        CallRemoteEvent("SyncDataCloth","clothing0", cloth.hair_models[hair].path)
     end
 end)
 
@@ -382,14 +384,15 @@ AddEvent("ChangeHairColor", function(hex, action)
         SkeletalMeshComponent:SetColorParameterOnMaterials("Hair Color", FLinearColor(r, g, b, a))
     elseif action == 1 then
         local color = RGB(r, g, b)
-        local fr, fg, fb, fa = HexToRGBAFloat(color)
-        SkeletalMeshComponent:SetColorParameterOnMaterials("Hair Color", FLinearColor(fr, fg, fb, fa))
+        r, g, b = HexToRGBAFloat(color)
+        AddPlayerChat(a)
+        SkeletalMeshComponent:SetColorParameterOnMaterials("Hair Color", FLinearColor(r, g, b, a))
     end
-    local data = GetPlayerPropertyValue(GetPlayerId(), "ClothingsData")
-    data.hair_color.r = fr or r
-    data.hair_color.g = fg or g
-    data.hair_color.b = fb or b
-    SetPlayerPropertyValue(GetPlayerId(), "ClothingsData", data)  
+    local data = {}
+    data.r = r
+    data.g = g
+    data.b = b
+    CallRemoteEvent("SyncDataCloth","hair_color", data)
 end)
 
 AddEvent("SetGlasses", function(action)
@@ -416,7 +419,6 @@ end)
 
 AddEvent("SetOutfit", function(action)
     SkeletalMeshComponent = GetPlayerSkeletalMeshComponent(GetPlayerId(), "Clothing1")
-    DataCloths = GetPlayerPropertyValue(GetPlayerId(), "ClothingsData")
     if gender == 0 then
         if action == 1 then
             outfit = outfit + 1
@@ -432,14 +434,16 @@ AddEvent("SetOutfit", function(action)
         if outfit == 0 then
             SkeletalMeshComponent:SetSkeletalMesh(nil)
             ExecuteWebJS(web, "UpdateOutfitName('".."None".."');")
+            CallRemoteEvent("SyncDataCloth","clothing1", nil, false)
         else
-            if DataCloths.body_mask == nil then
+            --if DataCloths.body_mask == nil then
                 --[[local BodySkeletalMeshComponent = GetPlayerSkeletalMeshComponent(GetPlayerId(), "Body")
                 BodySkeletalMeshComponent:SetMaterial(0, UMaterialInterface.LoadFromAsset("/Game/CharacterModels/Materials/HZN_Materials/M_HZN_Body_NoShoesLegsTorso"))
                 AddPlayerChat("yes")]]
-            end
+            --end
             SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(cloth.male.outfits[outfit].path))
             ExecuteWebJS(web, "UpdateOutfitName('"..cloth.male.outfits[outfit].name.."');")
+            CallRemoteEvent("SyncDataCloth","clothing1", cloth.male.outfits[outfit].path, true)
         end 
     elseif gender == 1 then
         if action == 1 then
@@ -456,15 +460,19 @@ AddEvent("SetOutfit", function(action)
         if outfit == 0 then
             SkeletalMeshComponent:SetSkeletalMesh(nil)
             ExecuteWebJS(web, "UpdateOutfitName('".."None".."');")
+            CallRemoteEvent("SyncDataCloth","clothing1", nil, false)
         else
             SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(cloth.female.outfits[outfit].path))
             ExecuteWebJS(web, "UpdateOutfitName('"..cloth.female.outfits[outfit].name.."');")
+            CallRemoteEvent("SyncDataCloth","clothing1", cloth.female.outfits[outfit].path, true)
         end  
     end
 end)
 
 AddEvent("SetTopCloth", function(action)
     SkeletalMeshComponent = GetPlayerSkeletalMeshComponent(GetPlayerId(), "Clothing1")
+    DataCloths = GetPlayerPropertyValue(GetPlayerId(), "ClothingsData")
+    local hasOutfit
     if gender == 0 then
         if action == 1 then
             top = top + 1
@@ -480,9 +488,16 @@ AddEvent("SetTopCloth", function(action)
         if top == 0 then
             SkeletalMeshComponent:SetSkeletalMesh(nil)
             ExecuteWebJS(web, "UpdateTopClothName('".."None".."');")
+            CallRemoteEvent("SyncDataCloth","clothing1", nil)
         else
+            if DataCloths.outfit == true then
+                hasOutfit = false
+                outfit = 0
+                ExecuteWebJS(web, "UpdateOutfitName('".."None".."');")
+            end
             SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(cloth.male.top[top].path))
             ExecuteWebJS(web, "UpdateTopClothName('"..cloth.male.top[top].name.."');")
+            CallRemoteEvent("SyncDataCloth","clothing1", cloth.male.top[top].path, hasOutfit)
         end 
     elseif gender == 1 then
         if action == 1 then
@@ -499,9 +514,16 @@ AddEvent("SetTopCloth", function(action)
         if top == 0 then
             SkeletalMeshComponent:SetSkeletalMesh(nil)
             ExecuteWebJS(web, "UpdateTopClothName('".."None".."');")
+            CallRemoteEvent("SyncDataCloth","clothing1", nil)
         else
+            if DataCloths.outfit == true then
+                hasOutfit = false
+                outfit = 0
+                ExecuteWebJS(web, "UpdateOutfitName('".."None".."');")
+            end
             SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(cloth.female.top[top].path))
             ExecuteWebJS(web, "UpdateTopClothName('"..cloth.female.top[top].name.."');")
+            CallRemoteEvent("SyncDataCloth","clothing1", cloth.female.top[top].path, hasOutfit)
         end  
     end
 end)
@@ -523,9 +545,11 @@ AddEvent("SetJacket", function(action)
         if jacket == 0 then
             SkeletalMeshComponent:SetSkeletalMesh(nil)
             ExecuteWebJS(web, "UpdateJacketName('".."None".."');")
+            CallRemoteEvent("SyncDataCloth","clothing2", nil)
         else
             SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(cloth.male.jackets[jacket].path))
             ExecuteWebJS(web, "UpdateJacketName('"..cloth.male.jackets[jacket].name.."');")
+            CallRemoteEvent("SyncDataCloth","clothing2", cloth.male.jackets[jacket].path)
         end 
     elseif gender == 1 then
         if action == 1 then
@@ -542,15 +566,18 @@ AddEvent("SetJacket", function(action)
         if jacket == 0 then
             SkeletalMeshComponent:SetSkeletalMesh(nil)
             ExecuteWebJS(web, "UpdateJacketName('".."None".."');")
+            CallRemoteEvent("SyncDataCloth","clothing2", nil)
         else
             SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(cloth.female.jackets[jacket].path))
             ExecuteWebJS(web, "UpdateJacketName('"..cloth.female.jackets[jacket].name.."');")
+            CallRemoteEvent("SyncDataCloth","clothing2", cloth.female.jackets[jacket].path)
         end  
     end
 end)
 
 AddEvent("SetPantCloth", function(action)
     SkeletalMeshComponent = GetPlayerSkeletalMeshComponent(GetPlayerId(), "Clothing4")
+    DataCloths = GetPlayerPropertyValue(GetPlayerId(), "ClothingsData")
     if gender == 0 then
         if action == 1 then
             pant = pant + 1
@@ -566,9 +593,17 @@ AddEvent("SetPantCloth", function(action)
         if pant == 0 then
             SkeletalMeshComponent:SetSkeletalMesh(nil)
             ExecuteWebJS(web, "UpdatePantsName('".."none".."');")
+            CallRemoteEvent("SyncDataCloth","clothing4", nil)
         else
+            if DataCloths.outfit == true then
+                AddPlayerChat("outfit")
+                Clothing1MeshComponent = GetPlayerSkeletalMeshComponent(GetPlayerId(), "Clothing1")
+                Clothing1MeshComponent:SetSkeletalMesh(nil)
+                DataCloths.outfit = false
+            end
             SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(cloth.male.pants[pant].path))
             ExecuteWebJS(web, "UpdatePantsName('"..cloth.male.pants[pant].name.."');")
+            CallRemoteEvent("SyncDataCloth","clothing4", cloth.male.pants[pant].path)
         end
     elseif gender == 1 then
         if action == 1 then
@@ -585,9 +620,16 @@ AddEvent("SetPantCloth", function(action)
         if pant == 0 then
             SkeletalMeshComponent:SetSkeletalMesh(nil)
             ExecuteWebJS(web, "UpdatePantsName('".."none".."');")
+            CallRemoteEvent("SyncDataCloth","clothing4", nil)
         else
+            if DataCloths.outfit == true then
+                Clothing1MeshComponent = GetPlayerSkeletalMeshComponent(GetPlayerId(), "Clothing1")
+                Clothing1MeshComponent:SetSkeletalMesh(nil)
+                DataCloths.outfit = false
+            end
             SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(cloth.female.pants[pant].path))
             ExecuteWebJS(web, "UpdatePantsName('"..cloth.female.pants[pant].name.."');")
+            CallRemoteEvent("SyncDataCloth","clothing4", cloth.female.pants[pant].path)
         end
     end
 end)
@@ -652,6 +694,7 @@ AddEvent("Apply", function()
     SetInputMode(INPUT_GAME)
     SetCameraLocation(0.0, 0.0, 0.0, false)
     SetCameraFoV(90)
+    SetIgnoreMoveInput(false)
 end)
 
 
@@ -673,7 +716,7 @@ end)
 
 AddEvent("OnPlayerNetworkUpdatePropertyValue", function(player, PropertyName, DataCloths)
     if PropertyName == "ClothingsData" then
-        if DataCloths ~= nil then
+        if DataCloths ~= nil and player ~= GetPlayerId() then
             UpdatePlayerCloths(player, DataCloths)
         end
     end
@@ -691,28 +734,30 @@ function UpdatePlayerCloths(player, DataCloths)
     else
         data = DataCloths
     end
-    if data.body ~= nil then
-        local SkeletalMeshComponent = GetPlayerSkeletalMeshComponent(GetPlayerId(), "Body")
-        SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(data.body))
-        SkeletalMeshComponent:SetMaterial(3, UMaterialInterface.LoadFromAsset(data.body_mask))
-    
-        SkeletalMeshComponent = GetPlayerSkeletalMeshComponent(GetPlayerId(), "Clothing0")
-        SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(data.clothing0))
-        SkeletalMeshComponent:SetColorParameterOnMaterials("Hair Color", FLinearColor(data.hair_color.r, data.hair_color.g, data.hair_color.b, 0.0))
-    
-        SkeletalMeshComponent = GetPlayerSkeletalMeshComponent(GetPlayerId(), "Clothing1")
-        SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(data.clothing1))
-    
-        SkeletalMeshComponent = GetPlayerSkeletalMeshComponent(GetPlayerId(), "Clothing2")
-        SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(data.clothing2))
-    
-        SkeletalMeshComponent = GetPlayerSkeletalMeshComponent(GetPlayerId(), "Clothing3")
-        SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(data.clothing3))
-    
-        SkeletalMeshComponent = GetPlayerSkeletalMeshComponent(GetPlayerId(), "Clothing4")
-        SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(data.clothing4))
 
-        SkeletalMeshComponent = GetPlayerSkeletalMeshComponent(GetPlayerId(), "Clothing5")
-        SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(data.clothing5))
+    local SkeletalMeshComponent = GetPlayerSkeletalMeshComponent(player, "Body")
+    SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(data.body))
+    SkeletalMeshComponent:SetMaterial(3, UMaterialInterface.LoadFromAsset(data.body_mask))
+        
+        
+    SkeletalMeshComponent = GetPlayerSkeletalMeshComponent(player, "Clothing0")
+    SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(data.clothing0))
+    if data.hair_color.r ~= nil then
+        SkeletalMeshComponent:SetColorParameterOnMaterials("Hair Color", FLinearColor(data.hair_color.r, data.hair_color.g, data.hair_color.b, 0.0))
     end
+    
+    SkeletalMeshComponent = GetPlayerSkeletalMeshComponent(player, "Clothing1")
+    SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(data.clothing1))
+    
+    SkeletalMeshComponent = GetPlayerSkeletalMeshComponent(player, "Clothing2")
+    SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(data.clothing2))
+    
+    SkeletalMeshComponent = GetPlayerSkeletalMeshComponent(player, "Clothing3")
+    SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(data.clothing3))
+    
+    SkeletalMeshComponent = GetPlayerSkeletalMeshComponent(player, "Clothing4")
+    SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(data.clothing4))
+
+    SkeletalMeshComponent = GetPlayerSkeletalMeshComponent(player, "Clothing5")
+    SkeletalMeshComponent:SetSkeletalMesh(USkeletalMesh.LoadFromAsset(data.clothing5))
 end
