@@ -3,7 +3,9 @@
 A simple UI for customizing your onset caracter.
 
 ### Feature
-- clean UI
+- Clean UI
+- Camera zoom on body
+- Allow to rotate the camera using the mouse
 - Networked cloths
 - Easy to modulate
 - Allow Custom models
