@@ -12,4 +12,4 @@ A simple UI for customizing your onset caracter.
 - Can be easy added to a project
 
 
-Video of presentation : 
+Video of presentation : https://www.youtube.com/watch?v=Qys-eQsvcqc&feature=youtu.be&ab_channel=GalaxHD551
