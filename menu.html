@@ -56,6 +56,14 @@
                 <div class="divMenu">
                     <div><button class="buttonMenu" type="button" onclick="ShowShoes(this)">Shoes</button></div>
                 </div>
+
+                <div class="divMenu">
+                    <div><button class="buttonMenu" type="button" onclick="ShowOutfit(this)">Outfit</button></div>
+                </div>
+
+                <div class="divMenu">
+                    <div><button class="buttonMenu" type="button" onclick="ShowAccessory(this)">Accessory</button></div>
+                </div>
                 
                 <div class="lastColonne">
                     <button class="buttonApply" type="button" onmousedown="Apply(this)">Apply</button>
@@ -119,20 +127,6 @@
                             </datalist>
                         <input type="color" id="hairColor" value="#808080"/>
                     </div>
-    
-                    <div class="divlabel">
-                        <div class="Label">Glasses</div>
-                    </div>
-    
-                    <div class="colonne" >
-                        <div class="sousColonne">
-                            <button class="buttonCusto" type="button" onmousedown="glassesPrevious(this)">&#8592</button>
-                        </div>
-                        <div class="sousColonne" id="Glasses">None</div>
-                        <div class="sousColonne">
-                            <button class="buttonCusto" type="button" onmousedown="glassesNext(this)">&#8594</button>
-                        </div>    
-                    </div>
 
                     <div class="lastColonne">
                         <button class="buttonApply" type="button" onclick="ShowMenu(this)">Back</button>
@@ -144,19 +138,6 @@
             
             <div id="displayTorso">
 
-                <div class="divlabel">
-                    <div class="Label">Outfit</div>
-                </div>
-                <div class="colonne">
-                    <div class="sousColonne">
-                        <button class="buttonCusto" type="button" onmousedown="outfitPrevious(this)">&#8592</button>
-                    </div>
-                    <div class="sousColonne"><div id="outfit">None</div></div> <!--OUTFIT-->
-                    <div class="sousColonne">
-                        <button class="buttonCusto" type="button" onmousedown="outfitNext(this)">&#8594</button>
-                    </div> 
-                </div>
-    
                 <div class="divlabel">
                     <div class="Label">Top</div>
                 </div>
@@ -230,8 +211,63 @@
                 </div>
 
             </div>
-        </div>
 
+            <div id="displayOutfit">
+                
+                <div class="divlabel">
+                    <div class="Label">Outfit</div>
+                </div>
+                <div class="colonne">
+                    <div class="sousColonne">
+                        <button class="buttonCusto" type="button" onmousedown="outfitPrevious(this)">&#8592</button>
+                    </div>
+                    <div class="sousColonne"><div id="outfit">None</div></div> <!--OUTFIT-->
+                    <div class="sousColonne">
+                        <button class="buttonCusto" type="button" onmousedown="outfitNext(this)">&#8594</button>
+                    </div> 
+                </div>
+
+                <div class="lastColonne">
+                    <button class="buttonApply" type="button" onclick="ShowMenu(this)">Back</button>
+                </div>
+
+            </div>
+
+            <div id="displayAccessory">
+
+                <div class="divlabel">
+                    <div class="Label">Accessory</div>
+                </div>
+
+                <div class="colonne" >
+                    <div class="sousColonne">
+                        <button class="buttonCusto" type="button" onmousedown="accessoryPrevious(this)">&#8592</button>
+                    </div>
+                    <div class="sousColonne" id="Accessory">None</div>
+                    <div class="sousColonne">
+                        <button class="buttonCusto" type="button" onmousedown="accessoryNext(this)">&#8594</button>
+                    </div>    
+                </div>
+
+                <div class="lastColonne">
+                    <button class="buttonApply" type="button" onclick="ShowMenu(this)">Back</button>
+                </div>
+
+            </div>
+
+            <div id="displayErrorMessage">
+
+                <!--<div class="colonne">-->
+                    <div id="ErrorMessage">You can't be nacked !</div>
+                <!--</div>-->
+
+                <div class="lastColonne">
+                    <button class="buttonApply" type="button" onclick="ShowMenu(this)">Back</button>
+                </div>
+
+            </div>
+
+        </div>
 
 
         <script>
@@ -243,6 +279,10 @@
                 document.getElementById("displayTorso").style.display = 'none';
                 document.getElementById("displayPants").style.display = 'none';
                 document.getElementById("displayShoes").style.display = 'none';
+                document.getElementById("displayOutfit").style.display = 'none';
+                document.getElementById("displayAccessory").style.display = 'none';
+                document.getElementById("displayErrorMessage").style.display = 'none';
+                CallEvent("CancelFocus");
             }
 
             function ShowIdentity(obj){
@@ -253,21 +293,37 @@
             function ShowHead(obj){
                 document.getElementById("displayMenu").style.display = 'none';
                 document.getElementById("displayHead").style.display = 'block';
+                CallEvent("HeadFocus");
             }
 
             function ShowTorso(obj){
                 document.getElementById("displayMenu").style.display = 'none';
                 document.getElementById("displayTorso").style.display = 'block';
+                CallEvent("TorsoFocus");
             }
 
             function ShowPants(obj){
                 document.getElementById("displayMenu").style.display = 'none';
                 document.getElementById("displayPants").style.display = 'block';
+                CallEvent("PantsFocus");
             }
 
             function ShowShoes(obj){
                 document.getElementById("displayMenu").style.display = 'none';
                 document.getElementById("displayShoes").style.display = 'block';
+                CallEvent("ShoesFocus");
+            }
+
+            function ShowOutfit(obj){
+                document.getElementById("displayMenu").style.display = 'none';
+                document.getElementById("displayOutfit").style.display = 'block';
+                CallEvent("CancelFocus");
+            }
+
+            function ShowAccessory(obj){
+                document.getElementById("displayMenu").style.display = 'none';
+                document.getElementById("displayAccessory").style.display = 'block';
+                CallEvent("CancelFocus");
             }
 
             function male(obj) {
@@ -291,11 +347,11 @@
             }
 
             function cameraHeadFocus(obj) {
-                CallEvent("SetCameraFocusOnHead", 1)
+                CallEvent("SetCameraFocusOnHead", 1);
             }
 
             function cameraHeadFocusEnd(obj) {
-                CallEvent("SetCameraFocusOnHead", 0)
+                CallEvent("SetCameraFocusOnHead", 0);
             }
 
             function hairNext(obj) {
@@ -313,25 +369,25 @@
             var thePresetInput = document.getElementById("hairColorPreset");
             var thePresetColor = thePresetInput.value;
             thePresetInput.addEventListener("input", function() {
-                CallEvent("ChangeHairColor", thePresetInput.value, 0)
+                CallEvent("ChangeHairColor", thePresetInput.value, 0);
             }, false);
 
             var theInput = document.getElementById("hairColor");
             var theColor = theInput.value;
             theInput.addEventListener("input", function() {
-                CallEvent("ChangeHairColor", theInput.value, 1)
+                CallEvent("ChangeHairColor", theInput.value, 1);
             }, false);
 
-            function glassesNext(obj) {
-                CallEvent("SetGlasses", 1);
+            function accessoryNext(obj) {
+                CallEvent("SetAccessory", 1);
             }
 
-            function glassesPrevious(obj) {
-                CallEvent("SetGlasses", 0);
+            function accessoryPrevious(obj) {
+                CallEvent("SetAccessory", 0);
             }
 
-            function UpdateGlassesName(label) {
-	            document.getElementById("Glasses").innerHTML = label;
+            function UpdateAccessoryName(label) {
+	            document.getElementById("Accessory").innerHTML = label;
             }
 
             function outfitNext(obj) {
@@ -396,6 +452,11 @@
 
             function Apply(obj) {
                 CallEvent("Apply");
+            }
+
+            function ShowErrorMessage(obj){
+                document.getElementById("displayMenu").style.display = 'none';
+                document.getElementById("displayErrorMessage").style.display = 'block';
             }
 
         </script>  

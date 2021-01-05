@@ -6,6 +6,7 @@ end)
 
 function CreatePlayerClothingData(player)
     local ClothingData = {
+        gender = 0,
         body = nil,
         clothing0 = nil,
         clothing1 = nil,
@@ -25,25 +26,23 @@ end
 
 AddRemoteEvent("SyncDataCloth", function(player, type, data, outfit)
     local ClothingData = GetPlayerPropertyValue(player, "ClothingsData")
-    if type == "body" then
-        --AddPlayerChat(player, ClothingData.body)
+    if outfit ~= nil then
+        ClothingData.outfit = outfit
+    end
+    if type == "gender" then
+        ClothingData.gender = data
+    elseif type == "body" then
         ClothingData.body = data
     elseif type == "clothing0" then
         ClothingData.clothing0 = data
     elseif type == "clothing1" then
         ClothingData.clothing1 = data
-        if outfit ~= nil then
-            ClothingData.outfit = outfit
-        end
     elseif type == "clothing2" then
         ClothingData.clothing2 = data
     elseif type == "clothing3" then
         ClothingData.clothing3 = data
     elseif type == "clothing4" then
         ClothingData.clothing4 = data
-        if data ~= nil then
-            ClothingData.outfit = false
-        end
     elseif type == "clothing5" then
         ClothingData.clothing5 = data
     elseif type == "hair_color" then
