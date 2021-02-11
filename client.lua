@@ -897,7 +897,8 @@ end)
 
 AddEvent("OnPlayerNetworkUpdatePropertyValue", function(player, PropertyName, DataCloths)
     if PropertyName == "ClothingsData" then
-        if DataCloths ~= nil and player ~= GetPlayerId() then
+
+        if DataCloths ~= nil then
             UpdatePlayerCloths(player, DataCloths)
         end
     end
@@ -909,13 +910,13 @@ AddEvent("OnPlayerStreamIn", function(player)
     end
 end)
 
+
 function UpdatePlayerCloths(player, DataCloths)
     if DataCloths == nil then 
         data = GetPlayerPropertyValue(player, "ClothingsData")
     else
         data = DataCloths
     end
-
     local SkeletalMeshComponent = GetPlayerSkeletalMeshComponent(player, "Body")
     if data.body == nil then
         data.body = cloth.male.body_models[1].path
