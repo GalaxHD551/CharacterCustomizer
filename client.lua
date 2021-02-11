@@ -912,8 +912,6 @@ end)
 
 
 function UpdatePlayerCloths(player, DataCloths)
-    print("UPDATE CLOTHHHHH")
-    AddPlayerChat(player, 'updateteeee')
     if DataCloths == nil then 
         data = GetPlayerPropertyValue(player, "ClothingsData")
     else
