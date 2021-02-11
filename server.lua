@@ -18,6 +18,7 @@ function CreatePlayerClothingData(player)
 
     local steamid = tostring(GetPlayerSteamId(player))
     local query = mariadb_prepare(sql, "select gender,body,clothing0,clothing1,clothing2,clothing4,clothing5,hair_color_r,hair_color_g, hair_color_b,body_mask,outfit from clothes where steamid = '?';", steamid)
+
     local ClothingData = {
         gender = 0,
         body = nil,
@@ -30,8 +31,7 @@ function CreatePlayerClothingData(player)
         hair_color = {},
         body_mask = nil,
         outfit = false
-    }
-    
+    }    
     mariadb_query(sql, mariadb_prepare(sql, query), function(player)
         if isNew == false then
             for i=1, mariadb_get_field_count(), 1 do
@@ -54,6 +54,7 @@ AddRemoteEvent("SyncDataCloth", function(player, type, data, outfit)
 
     
     local q = mariadb_prepare(sql, "update clothes set ? = '?' WHERE steamid = '?';", type, tostring(data), steamid)
+
     mariadb_query(sql, q)  
 
     if outfit ~= nil then
